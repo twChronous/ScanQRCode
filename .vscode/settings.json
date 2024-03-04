@@ -1,0 +1,6 @@
+{
+    "cSpell.enableFiletypes": [
+        "!cpp"
+    ],
+    "ros.distro": "noetic"
+}
