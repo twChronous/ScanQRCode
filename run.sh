@@ -1,3 +1,2 @@
-g++ main.cpp -o teste `pkg-config opencv --cflags --libs` -lopencv_aruco
-
+g++ main.cpp -o teste `pkg-config opencv --cflags --libs` -lzbar
 ./teste

@@ -12,7 +12,7 @@ int main() {
     // Loop principal para capturar imagens até que o usuário pressione a tecla 'q'
     while (true) {
         // Captura um frame da câmera
-        camera.showImage();
+        camera.showImage(true);
 
         // Verifica se o usuário pressionou a tecla 'q' para sair do loop
         if (cv::waitKey(1) == 'q') {

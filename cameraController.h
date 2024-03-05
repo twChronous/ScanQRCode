@@ -1,20 +1,21 @@
 #include <opencv2/opencv.hpp>
-#include <opencv2/aruco.hpp>
+#include <zbar.h>
 
 class Camera {
 private:
     cv::VideoCapture cap;
+    zbar::ImageScanner scanner;
 
 public:
-    Camera() {
+    Camera() : scanner() {
         // Abre a câmera padrão (0 para a primeira câmera conectada)
         cap.open(0);
         
         // Verifica se a câmera foi aberta corretamente
         if (!cap.isOpened()) {
             std::cerr << "Erro ao abrir a câmera!" << std::endl;
-        } 
-
+            exit(1);
+        }
     }
 
     ~Camera() {
@@ -22,37 +23,32 @@ public:
         cap.release();
     }
 
-    void showImage() {
+    void showImage(bool ScanQRCode = false) {
         cv::Mat frame;
 
         // Captura um frame da câmera
         cap >> frame;
 
-        // Detecta códigos QR na imagem
-        detectarQR(frame);
+        // Converte o frame capturado para tons de cinza
+        cv::Mat gray;
+        cv::cvtColor(frame, gray, cv::COLOR_BGR2GRAY);
+
+        // Cria uma imagem ZBar
+        zbar::Image imagemQR(gray.cols, gray.rows, "Y800", gray.data, gray.cols * gray.rows);
+
+        // Realiza a decodificação dos códigos QR na imagemif
+        if(ScanQRCode) scanner.scan(imagemQR);
 
         // Exibe o frame capturado
         cv::imshow("Camera", frame);
 
+        // Processa os resultados da decodificação
+        for (zbar::Image::SymbolIterator simbolo = imagemQR.symbol_begin(); simbolo != imagemQR.symbol_end(); ++simbolo) {
+            std::cout << "Tipo de código: " << simbolo->get_type_name() << std::endl;
+            std::cout << "Conteúdo: " << simbolo->get_data() << std::endl;
+        }
+
         // Aguarda uma tecla ser pressionada por 30ms (o número pode ser ajustado conforme necessário)
         cv::waitKey(30);
-    }
-
-private:
-    void detectarQR(cv::Mat& frame) {
-        std::vector<int> markerIds;
-        std::vector<std::vector<cv::Point2f>> markerCorners;
-        cv::Ptr<cv::aruco::DetectorParameters> parameters = cv::aruco::DetectorParameters::create();
-
-        // Cria um objeto de dicionário (pode ser DICT_6X6_250, DICT_6X6_100, etc.)
-        cv::Ptr<cv::aruco::Dictionary> dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_6X6_250);
-
-        // Detecta marcadores na imagem
-        cv::aruco::detectMarkers(frame, dictionary, markerCorners, markerIds, parameters);
-
-        // Desenha os contornos e IDs dos marcadores detectados
-        if (!markerIds.empty()) {
-            cv::aruco::drawDetectedMarkers(frame, markerCorners, markerIds);
-        }
     }
 };
