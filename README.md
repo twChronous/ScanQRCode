@@ -16,11 +16,10 @@ when you're ready to compile and run the code use this command
 ./run.sh
 ```
 
-## Acknowledgements
-
- - [OpenCV is required](https://github.com/jayrambhia/Install-OpenCV/tree/masterhttps://github.com/jayrambhia/Install-OpenCV/tree/masters)
+## Requirements
+ - [OpenCV is required](https://github.com/jayrambhia/Install-OpenCV/tree/master)
+ - [Zbar is requied](https://github.com/mchehab/zbar)
  - [We recomend Ubuntu 20.04](https://releases.ubuntu.com/focal/)
-
 
 
 ## Authors
