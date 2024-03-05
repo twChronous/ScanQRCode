@@ -10,6 +10,7 @@ in order to run the  code is preffered that you use the run.sh file following th
 
 ```bash
 chmod +xrun.sh
+sudo apt-get install pkg-config
 ```
 when you're ready to compile and run the code use this command
 ```bash
