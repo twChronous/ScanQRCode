@@ -1,4 +1,4 @@
-#include <iostream>
+#include <ostream>
 #include <stdio.h>
 
 #include "cameraController.h"
