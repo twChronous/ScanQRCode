@@ -2,8 +2,6 @@
 
 #include "cameraController.h"
 
-using namespace std;
-
 int main() {
     Camera camera;
 
