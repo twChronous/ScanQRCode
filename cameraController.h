@@ -1,14 +1,14 @@
-#include <opencv2/opencv.hpp>
 #include <zbar.h>
 #include <math.h>
+#include <opencv2/opencv.hpp>
 
 class Camera {
 public:
-    bool is_scanning_QR_code = false;
     int camera_index = 0;
-    float known_qr_code_size = 10; // Tamanho real do QR code em cm
-    float focal_length = 500.0; // Distância focal da câmera em pixels (valor pré-definido)
-
+    float focal_length = 500.0; 
+    bool is_show_distance = false;
+    float known_qr_code_size = 10;
+    bool is_scanning_QR_code = false;
 
 private:
     cv::VideoCapture capture;
@@ -46,12 +46,13 @@ public:
                     for (int i = 0; i < symbol->get_location_size(); ++i) {
                         qr_points.emplace_back(symbol->get_location_x(i), symbol->get_location_y(i));
                     }
+                    if (is_show_distance) {
+                        float qr_area = cv::contourArea(qr_points);
+                        float distance = (known_qr_code_size * focal_length) / sqrt(qr_area);
 
-                    float qr_area = cv::contourArea(qr_points);
-                    float distance = (known_qr_code_size * focal_length) / sqrt(qr_area);
-
-                    std::cout << "Distância: " << distance << " cm" << std::endl;
-                    cv::polylines(frame, qr_points, true, cv::Scalar(0, 255, 0), 2);
+                        std::cout << "Distância: " << distance << " cm" << std::endl;
+                        cv::polylines(frame, qr_points, true, cv::Scalar(0, 255, 0), 2);
+                    }
                 }
             }
         }
@@ -63,7 +64,9 @@ public:
     void set_scanning_QR_code(bool is_scanning) {
         this->is_scanning_QR_code = is_scanning;
     }
-
+    void set_show_distance(bool is_distance) {
+        this->is_show_distance = is_distance;
+    }
     void set_camera_index(int index) {
         this->camera_index = index;
         capture.release();

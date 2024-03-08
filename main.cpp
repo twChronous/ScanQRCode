@@ -13,6 +13,8 @@ int main() {
     camera.set_focal_length(500.0);
     //Tamanho do QR Code em cm
     camera.set_qr_code_size(10.0);
+    // Mostrar a distancia
+    camera.set_show_distance(true);
 
     std::cout << "Code ON!" << std::endl;
     while (true) {
