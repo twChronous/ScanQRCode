@@ -2,53 +2,63 @@
 #include <zbar.h>
 
 class Camera {
+public:
+    bool is_scanning_QR_code = false;
+    int camera_index = 0;
+
 private:
-    cv::VideoCapture cap;
+    cv::VideoCapture capture;
     zbar::ImageScanner scanner;
 
 public:
-    Camera() : scanner() {
-        // Abre a câmera padrão (0 para a primeira câmera conectada)
-        cap.open(0);
-        
-        // Verifica se a câmera foi aberta corretamente
-        if (!cap.isOpened()) {
-            std::cerr << "Erro ao abrir a câmera!" << std::endl;
-            exit(1);
+    Camera() : scanner() {       
+        capture.open(camera_index);
+        if (!capture.isOpened()) {
+            throw std::runtime_error("Erro ao abrir a câmera!");
         }
     }
 
     ~Camera() {
-        // Fecha a câmera quando o objeto Camera é destruído
-        cap.release();
+        capture.release();
     }
 
-    void showImage(bool ScanQRCode = false) {
+    void show_image() {
         cv::Mat frame;
+        capture >> frame;
 
-        // Captura um frame da câmera
-        cap >> frame;
+        if (!frame.empty()) {
+            cv::Mat gray;
+            cv::cvtColor(frame, gray, cv::COLOR_BGR2GRAY);
 
-        // Converte o frame capturado para tons de cinza
-        cv::Mat gray;
-        cv::cvtColor(frame, gray, cv::COLOR_BGR2GRAY);
+            zbar::Image zbar_image(gray.cols, gray.rows, "Y800", gray.data, gray.cols * gray.rows);
 
-        // Cria uma imagem ZBar
-        zbar::Image imagemQR(gray.cols, gray.rows, "Y800", gray.data, gray.cols * gray.rows);
+            if (is_scanning_QR_code) {
+                scanner.scan(zbar_image);
 
-        // Realiza a decodificação dos códigos QR na imagemif
-        if(ScanQRCode) scanner.scan(imagemQR);
+                for (zbar::Image::SymbolIterator symbol = zbar_image.symbol_begin(); symbol != zbar_image.symbol_end(); ++symbol) {
+                    std::cout << "QR Code content: " << symbol->get_data() << std::endl;
 
-        // Exibe o frame capturado
-        cv::imshow("Camera", frame);
+                    std::vector<cv::Point> qr_points;
+                    for (int i = 0; i < symbol->get_location_size(); ++i) {
+                        qr_points.emplace_back(symbol->get_location_x(i), symbol->get_location_y(i));
+                    }
 
-        // Processa os resultados da decodificação
-        for (zbar::Image::SymbolIterator simbolo = imagemQR.symbol_begin(); simbolo != imagemQR.symbol_end(); ++simbolo) {
-            std::cout << "Tipo de código: " << simbolo->get_type_name() << std::endl;
-            std::cout << "Conteúdo: " << simbolo->get_data() << std::endl;
+                    cv::polylines(frame, qr_points, true, cv::Scalar(0, 255, 0), 2);
+                }
+            }
+
+            cv::imshow("Camera", frame);
+            cv::waitKey(30);
         }
+    }
 
-        // Aguarda uma tecla ser pressionada por 30ms (o número pode ser ajustado conforme necessário)
-        cv::waitKey(30);
+    void set_scanning_QR_code(bool is_scanning) {
+        this->is_scanning_QR_code = is_scanning;
+    }
+
+    void set_camera_index(int index) {
+        this->camera_index = index;
+        capture.release();
+        capture.open(camera_index);
     }
 };

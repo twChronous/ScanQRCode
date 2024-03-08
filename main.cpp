@@ -1,4 +1,3 @@
-#include <ostream>
 #include <stdio.h>
 
 #include "cameraController.h"
@@ -6,14 +5,16 @@
 using namespace std;
 
 int main() {
-    // Cria um objeto Camera
     Camera camera;
 
-    // Loop principal para capturar imagens até que o usuário pressione a tecla 'q'
-    while (true) {
-        // Captura um frame da câmera
-        camera.showImage(true);
+    // Define se é para escanear QRCodes
+    camera.set_scanning_QR_code(true);
 
+    // Define qual camera usar
+    camera.set_camera_index(0);
+
+    while (true) {
+        camera.show_image();
         // Verifica se o usuário pressionou a tecla 'q' para sair do loop
         if (cv::waitKey(1) == 'q') {
             break;
