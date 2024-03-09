@@ -1,12 +1,12 @@
 
 # QRCode Scanner C++
 
-A scanner made in c++ to scan qr codes for [CBR 2024](https://www.cbrobotica.org/)
+A scanner made in c++ to scan QR codes and a Landing and Takeoff Base for [CBR 2024](https://www.cbrobotica.org/)
 
 
 ## Usage/Examples
 
-in order to run the  code is preferred that you use the run.sh file following this instructions
+in order to run the code is preferred that you use the run.sh file following this instructions
 
 ```bash
 chmod +xrun.sh
