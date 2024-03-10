@@ -9,6 +9,8 @@ public:
     bool is_show_distance = false;
     float known_qr_code_size = 10;
     bool is_scanning_QR_code = false;
+    bool is_takeoff_base = false;
+    bool is_landing_base = false;
 
 private:
     cv::VideoCapture capture;
@@ -55,6 +57,13 @@ public:
                     }
                 }
             }
+            if (is_landing_base) {
+                //Código de identificação da base de pouso
+                
+            }
+            if (is_takeoff_base) {
+                //Código de identificação da base de decolagem
+            }
         }
 
             cv::imshow("Camera", frame);
@@ -67,12 +76,17 @@ public:
     void set_show_distance(bool is_distance) {
         this->is_show_distance = is_distance;
     }
+    void set_identify_landing_base(bool is_base) {
+        this->is_landing_base = is_base;
+    }
+    void set_identify_takeoff_base(bool is_base) {
+        this->is_takeoff_base = is_base;
+    }
     void set_camera_index(int index) {
         this->camera_index = index;
         capture.release();
         capture.open(camera_index);
     }
-
     void set_focal_length(int size) {
         this->focal_length = size;
     }

@@ -9,7 +9,7 @@ A scanner made in c++ to scan QR codes and a Landing and Takeoff Base for [CBR 2
 in order to run the code is preferred that you use the run.sh file following this instructions
 
 ```bash
-chmod +xrun.sh
+chmod +x run.sh
 sudo apt-get install pkg-config
 ```
 when you're ready to compile and run the code use this command
